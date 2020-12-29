@@ -4,6 +4,7 @@ import https from 'https'
 import { input } from '../main';
 import { createDiffieHellman } from 'crypto';
 import Config from '../Interfaces/config';
+import Streaming from "../Connection/Streaming"
 
 
 export class misskeyCredential {
@@ -39,6 +40,8 @@ export default class API {
             // console.log("Max Text Length: " + ret.maxNoteTextLength);
             input.prompt(true);
         }));*/
+        
+        new Streaming(true);
     }
 
     constructor() {

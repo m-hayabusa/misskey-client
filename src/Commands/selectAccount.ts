@@ -1,5 +1,6 @@
 import command from "./command";
 import API from "../Connection/API"
+import Streaming from "../Connection/Streaming"
 import {misskeyCredential} from "../Connection/API" 
 
 export default class selectAccount extends command {
@@ -10,6 +11,7 @@ export default class selectAccount extends command {
             return (new selectAccount).help;
         }
         API.account = arg;
+        new Streaming();
 
         return "selectAccount: " + arg;
     };
