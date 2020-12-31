@@ -17,23 +17,15 @@ export class StreamingBody {
 export default class Streaming {    
     static ws:websocket;
     static hook:Map<string,Function> = new Map<string,Function>();
-    
-    private msg = {
-        content: function(content:string){ return content.replace(/<br( \/)?>/g,'\n')
-                                                .replace(/<\/p><p>/g,'\n')
-                                                .replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,'')
-                                                .replace(/(&lt;)/g, '<')
-                                                .replace(/(&gt;)/g, '>')
-                                                .replace(/(&quot;)/g, '"')
-                                                .replace(/(&#39;)/g, "'")
-                                                .replace(/(&amp;)/g, '&')
-                                                .replace(/(&apos;)/g, '\'')},
-        notify:  function(display_name:string, acct:string, type:string, content=''){ return "\x1b[G\x1b[44m" + display_name + " @" + acct + "が\x1b[5m " + type + " \x1b[0m\x1b[44mしました" + (content && ": \n"+content) + "\x1b[0m"},
-        footer:  function(id:string, created_at:string) { return "\x1b[G\x1b[47m\x1b[30m " + id + ' '.repeat(process.stdout.columns - created_at.length - id.toString().length -2) + created_at + " \x1b[0m"}
-    };
+
     static isReady:boolean = false;
 
     constructor(forceReconnect = false){
+        if (Streaming.isReady && forceReconnect){
+            Streaming.isReady = false;
+            Streaming.ws.close();
+            Streaming.hook = new Map<string,Function>();
+        }
         if (!Streaming.isReady || forceReconnect){
             Streaming.ws = new websocket("wss://" + API.accounts.get(API.account)?.getUri() + "/streaming?i=" + API.accounts.get(API.account)?.getKey());
             Streaming.ws.on('open', ()=>{Streaming.isReady = true;console.log("connected")})
@@ -54,7 +46,10 @@ export default class Streaming {
                     input.prompt(true);
                 };
             })
-            Streaming.hook = new Map<string,Function>();
+            Streaming.ws.on('error', (err)=>{
+                console.warn(err);
+                Streaming.isReady = false;
+            })
         }
     };
 
