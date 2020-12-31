@@ -13,7 +13,7 @@ export default class createNote extends command {
             // console.log(data);
             if (data.type === "note"){
                 // input.prompt(false);
-                process.stdout.write("\x1b[2K");
+                process.stdout.write("\x1b[1A" + "\x1b[2K");
 
                 if (data.body.renote) {
                     console.log("\x1b[G" + "\x1b[46m " + data.body.user.name + " \x1b[43m Re "
@@ -22,10 +22,12 @@ export default class createNote extends command {
                     console.log("\x1b[G" + "\x1b[46m " + data.body.user.name + " \x1b[0m");
                 }
 
-                process.stdout.write(data.body.text ? data.body.text+'\n':'')
+                console.log(data.body.text ? data.body.text : '\x1b[2m (本文なし) \x1b[0m')
                 
                 if (data.body.renote) {
-                    console.log("> " , data.body.renote.text)
+                    process.stdout.write('-'.repeat(process.stdout.columns) + " \x1b[0m")
+                
+                    console.log("\x1b[G" + data.body.renote.text + " \x1b[0m")
                 }
 
                 let id = data.body.user.username + (data.body.user.host ? ('@' + data.body.user.host):'');
