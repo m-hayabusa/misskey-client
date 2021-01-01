@@ -78,10 +78,10 @@ export default class API {
             agent: false
         }, (res: any) => {
             ret = ""
-            if (res.statusCode != 200){
+            if (res.statusCode >= 400){
                 console.log(res);
                 console.log('statusCode:', res.statusCode);
-                console.log('headers:', res.headers);
+                // console.log('headers:', res.headers);
             }
 
             res.on('data', (chunk: string) => {
