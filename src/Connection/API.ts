@@ -60,7 +60,7 @@ export default class API {
             if (host === undefined) host = credential.getUri();
         }
 
-        console.log("host", host);
+        // console.log("host", host);
 
         let ret: string
         
