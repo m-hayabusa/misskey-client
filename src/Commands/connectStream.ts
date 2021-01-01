@@ -1,15 +1,16 @@
-import command from "./command";
-import API from "../Connection/API"
+    import command from "./command";
+    import API from "../Connection/API"
 import Streaming from "../Connection/Streaming"
 import {StreamingBody as StreamingBody} from "../Connection/Streaming"
 import {input} from '../main';
 
-export default class createNote extends command {
+export default class connectStream extends command {
     regex = /^(connect)/;
     help = "connectStream :\t> connect\t-> タイムラインにストリーミング接続します (開発中)";
     function = function(arg:string){
         let stream = new Streaming();
-        createNote.Id = stream.connectChannel(new StreamingBody("homeTimeline"), (data:any)=>{
+        
+        connectStream.Id.set("homeTimeline", stream.connectChannel(new StreamingBody("homeTimeline"), (data:any)=>{
             // console.log(data);
             if (data.type === "note"){
                 // input.prompt(false);
@@ -26,7 +27,7 @@ export default class createNote extends command {
                 
                 if (data.body.renote) {
                     process.stdout.write('-'.repeat(process.stdout.columns) + " \x1b[0m")
-                
+
                     console.log("\x1b[G" + data.body.renote.text + " \x1b[0m")
                 }
 
@@ -34,15 +35,15 @@ export default class createNote extends command {
                 if (data.body.renote){
                     id += ' Re '+data.body.renote.user.username + '@' + data.body.renote.user.host;
                 }
-                console.log("\x1b[G\x1b[47m\x1b[30m " + id + ' '.repeat(process.stdout.columns - data.body.createdAt.length - id.toString().length -2) + data.body.createdAt + " \x1b[0m")
+                connectStream.notes.set(data.body.id.slice(-4), data.body.id)
+                console.log("\x1b[G\x1b[47m\x1b[30m " + data.body.id.slice(-4) + ' ' + id + ' '.repeat(process.stdout.columns - data.body.createdAt.length - id.toString().length -2 -5 ) + data.body.createdAt + " \x1b[0m")
                 
                 input.prompt(true);
             }
-        });
-
-        console.log(createNote.Id);
+        }));
 
         return "connectStream: " + arg;
     };
-    static Id:string;
+    static Id:Map<string, string> = new Map<string, string>();
+    static notes:Map<string, string> = new Map<string, string>();
 }
