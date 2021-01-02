@@ -1,16 +1,16 @@
-    import command from "./command";
-    import API from "../Connection/API"
+import command from "./command";
+import API from "../Connection/API"
 import Streaming from "../Connection/Streaming"
 import {StreamingBody as StreamingBody} from "../Connection/Streaming"
 import {input} from '../main';
 
 export default class connectStream extends command {
     regex = /^(connect)/;
-    help = "connectStream :\t> connect\t-> タイムラインにストリーミング接続します (開発中)";
+    help = "connectStream :\t> connect <homeTimeline>\t-> タイムラインにストリーミング接続します (開発中)";
     function = function(arg:string){
         let stream = new Streaming();
         
-        connectStream.Id.set("homeTimeline", stream.connectChannel(new StreamingBody("homeTimeline"), (data:any)=>{
+        connectStream.Id.set(arg, stream.connectChannel(new StreamingBody(arg), (data:any)=>{
             // console.log(data);
             if (data.type === "note"){
                 // input.prompt(false);
@@ -46,4 +46,21 @@ export default class connectStream extends command {
     };
     static Id:Map<string, string> = new Map<string, string>();
     static notes:Map<string, string> = new Map<string, string>();
+}
+
+
+export class disconnectStream extends command {
+    regex = /^(disconnect)/;
+    help = "disconnectStream :\t> connect <homeTimeline>\t-> タイムラインにストリーミング接続します (開発中)";
+    function = function(arg:string){
+        let stream = new Streaming()
+        let id = connectStream.Id.get(arg)
+        if (id){
+            stream.disconnectChannel(id)
+        } else {
+            return (new disconnectStream).help
+        }
+
+        return "disconnectStream: " + arg
+    }
 }
