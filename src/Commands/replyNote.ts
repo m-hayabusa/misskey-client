@@ -12,7 +12,7 @@ export default class replyNote extends command {
         }
         const text = t[2];
         const replyId = connectStream.notes.get(t[1]);
-        if (!replyId) {
+        if (replyId == undefined || text == undefined || /^[ ]*$/.test(text)) {
             return (new replyNote).help;
         }
         const api = new API();
