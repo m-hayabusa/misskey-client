@@ -1,24 +1,20 @@
-import { v4 as uuidv4 } from 'uuid'
-import { Url } from 'url';
-import https from 'https'
-import { input } from '../main';
-import { createDiffieHellman } from 'crypto';
-import Config from '../Interfaces/config';
-import Streaming from "../Connection/Streaming"
+import https from 'https';
+import { config, input } from '../main';
+import Streaming from "../Connection/Streaming";
 
 
 export class misskeyCredential {
     constructor(domain: string, key: string) {
-        this.domain = domain
-        this.key = key
+        this.domain = domain;
+        this.key = key;
     }
 
-    public getUri() {
-        return this.domain
+    public getUri(): string {
+        return this.domain;
     }
 
-    public getKey() {
-        return this.key
+    public getKey(): string {
+        return this.key;
     }
 
     private domain: string
@@ -27,34 +23,27 @@ export class misskeyCredential {
 
 
 export default class API {
-    static accounts:Map<string, misskeyCredential>;
+    static accounts: Map<string, misskeyCredential>;
     static _account: string;
-    static get account() {
+    static get account(): string {
         return API._account;
     }
     static set account(arg: string) {
-        API._account = arg;/*
-        let api = new API();
-        api.request("meta", {}, ((ret: any) => {
-            console.log("Misskey v" + ret.version);
-            // console.log("Max Text Length: " + ret.maxNoteTextLength);
-            input.prompt(true);
-        }));*/
-        
+        API._account = arg;
+
         new Streaming(true);
     }
 
     constructor() {
-        const config = new Config;
         config.loadCredentials();
-        if(API.account === undefined && API.accounts.size > 0){
+        if (API.account === undefined && API.accounts.size > 0) {
             API.account = API.accounts.keys().next().value;
         }
     }
 
-    public request(endpoint: string, reqbody: any, callback?: Function, auth=true, host?:string) {
+    public request(endpoint: string, reqbody: any, callback?: (param: string) => void, auth = true, host?: string): void {
         if (API.accounts.has(API.account)) {
-            let credential = API.accounts.get(API.account);
+            const credential = API.accounts.get(API.account);
             if (credential === undefined) return;
             reqbody.i = credential.getKey();
             if (host === undefined) host = credential.getUri();
@@ -62,12 +51,12 @@ export default class API {
 
         // console.log("host", host);
 
-        let ret: string
-        
+        let ret: string;
+
         const body = JSON.stringify(reqbody);
         // console.log(body);
 
-        let req = https.request({
+        const req = https.request({
             hostname: host,
             path: '/api/' + endpoint,
             method: 'POST',
@@ -77,8 +66,8 @@ export default class API {
             },
             agent: false
         }, (res: any) => {
-            ret = ""
-            if (res.statusCode >= 400){
+            ret = "";
+            if (res.statusCode >= 400) {
                 console.log(res);
                 console.log('statusCode:', res.statusCode);
                 // console.log('headers:', res.headers);
@@ -86,17 +75,17 @@ export default class API {
 
             res.on('data', (chunk: string) => {
                 // console.log(`BODY: ${chunk}`);
-                ret += chunk
+                ret += chunk;
             });
             res.on('end', () => {
                 // console.log(ret);
                 if (callback) {
-                    callback(JSON.parse(ret))
+                    callback(JSON.parse(ret));
                 } else {
                     input.prompt(true);
                 }
             });
-        })
+        });
         req.on('error', (e) => {
             console.error(e);
         });

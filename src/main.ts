@@ -1,14 +1,15 @@
-import Input from "./Interfaces/input"
-import API from "./Connection/API"
-import {misskeyCredential} from "./Connection/API" 
+import Input from "./Interfaces/input";
+import Config from './Interfaces/config';
+import API from './Connection/API';
 
-export let input = new Input()
+export const input = new Input();
+export const config = new Config();
+export const api = new API();
 
 function main() {
-    console.log("hello.")
-    const api = new API();
+    console.log("hello.");
 
-    input.input()
+    input.input();
 }
 
-main()
+main();

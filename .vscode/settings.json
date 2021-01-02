@@ -1,0 +1,6 @@
+{
+    "eslint.format.enable": true,
+    "editor.formatOnSave": true,
+    "eslint.lintTask.enable": true,
+    "eslint.packageManager": "yarn"
+}
