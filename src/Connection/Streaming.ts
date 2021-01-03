@@ -26,9 +26,14 @@ export default class Streaming {
             Streaming.ws.close();
             Streaming.hook.clear();
         }
-        if (!Streaming.isReady || forceReconnect) {
+        if (!Streaming.isReady) {
             Streaming.ws = new websocket("wss://" + API.accounts.get(API.account)?.getUri() + "/streaming?i=" + API.accounts.get(API.account)?.getKey());
-            Streaming.ws.on('open', () => { Streaming.isReady = true; console.log("connected"); });
+            Streaming.ws.on('open', () => {
+                Streaming.isReady = true;
+                process.stdout.write("\x1b[1A" + "\x1b[2K");
+                console.log("connected");
+                input.prompt(true);
+            });
             Streaming.ws.on("message", (str: any) => {
                 try {
                     const data = JSON.parse(str);
@@ -40,8 +45,8 @@ export default class Streaming {
                         console.log(data.body);
                         input.prompt(true);
                     }
-                } catch {
-                    console.warn("ぶええええ");
+                } catch (e) {
+                    console.warn("ぶええええ\n", e, "\n\n");
                 }
             });
             Streaming.ws.on('error', (err) => {
