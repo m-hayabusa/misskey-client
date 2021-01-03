@@ -25,7 +25,7 @@ export default class addAccount extends command {
                 if (ret.ok) {
                     console.log("取得しました");
                     API.accounts.set(ret.user.username + '@' + arg, new misskeyCredential(arg, ret.token));
-                    API.account = arg;
+                    API.account = ret.user.username + '@' + arg;
                     const config = new Config;
                     config.saveCredentials();
                 } else {
