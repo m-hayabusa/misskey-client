@@ -3,7 +3,7 @@ import API from "../Connection/API";
 import Streaming from "../Connection/Streaming";
 
 export default class selectAccount extends command {
-    regex = /^(switch)/;
+    regex = /^(switch)$/;
     help = "selectAccount:\t> switch <ユーザーID>\t-> そのアカウントに切り替えます";
     function = function (arg: string): string {
         if (!arg || !API.accounts.has(arg)) {

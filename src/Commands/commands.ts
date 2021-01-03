@@ -17,8 +17,8 @@ export default class Commands {
 
     public exec(arg: string): void {
         this.commands.forEach(e => {
-            if (e.regex.test(arg)) {
-                console.log(e.function(arg.replace(e.regex, '').replace(/^ /, '')));
+            if (e.regex.test(arg.replace(/ .*$/, ''))) {
+                console.log(e.function(arg.replace(/(?:\S*)(?: (.*))?$/, '$1')));
                 input.prompt(true);
             }
         });

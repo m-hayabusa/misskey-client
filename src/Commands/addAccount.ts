@@ -6,7 +6,7 @@ import { misskeyCredential } from "../Connection/API";
 import Config from '../Interfaces/config';
 
 export default class addAccount extends command {
-    regex = /^(addAccount)/;
+    regex = /^(addAccount)$/;
     help = "addAccount:\t> addAccount <ドメイン>\t-> そのインスタンスのアカウントでログインします";
     function = function (arg: string): string {
         const api = new API;

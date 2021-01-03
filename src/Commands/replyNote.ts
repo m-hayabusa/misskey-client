@@ -3,7 +3,7 @@ import API from "../Connection/API";
 import connectStream from "./connectStream";
 
 export default class replyNote extends command {
-    regex = /^(reply|re)/
+    regex = /^(reply|re)$/
     help = "replyNote:\t> re <投稿ID> <コメント>\t-> 投稿にリプライします"
     function = function (arg: string): string {
         const t = / ?(.{4})(?: (.*))?/.exec(arg);

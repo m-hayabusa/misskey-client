@@ -4,7 +4,7 @@ import { StreamingBody as StreamingBody } from "../Connection/Streaming";
 import { input } from '../main';
 
 export default class connectStream extends command {
-    regex = /^(connect)/;
+    regex = /^(connect)$/;
     help = "connectStream :\t> connect <homeTimeline>\t-> タイムラインにストリーミング接続します (開発中)";
     function = function (arg: string): string {
         const stream = new Streaming();
