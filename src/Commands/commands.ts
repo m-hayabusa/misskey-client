@@ -16,9 +16,10 @@ export default class Commands {
     public commands: command[] = [new help, new createNote, new repostNote, new replyNote, new reactNote, new selectAccount, new addAccount, new execute, new connectStream, new disconnectStream];
 
     public exec(arg: string): void {
+        const regex = /(\S*)(?: (.*))?/s;
         this.commands.forEach(e => {
-            if (e.regex.test(arg.replace(/ .*$/, ''))) {
-                console.log(e.function(arg.replace(/(?:\S*)(?: (.*))?$/, '$1')));
+            if (e.regex.test(arg.replace(regex, '$1'))) {
+                console.log(e.function(arg.replace(regex, '$2')));
                 input.prompt(true);
             }
         });
