@@ -5,7 +5,7 @@ import { input } from '../main';
 
 export default class connectStream extends command {
     regex = /^(connect)$/;
-    help = "connectStream :\t> connect <homeTimeline>\t-> タイムラインにストリーミング接続します (開発中)";
+    help = "connectStream :\t> connect <main|homeTimeline>\t-> タイムラインにストリーミング接続します (開発中)";
     function = function (arg: string): string {
         const stream = new Streaming();
 
@@ -38,6 +38,20 @@ export default class connectStream extends command {
                 console.log("\x1b[G\x1b[47m\x1b[30m " + data.body.id.slice(-4) + ' ' + id + ' '.repeat(process.stdout.columns - data.body.createdAt.length - id.toString().length - 2 - 5) + data.body.createdAt + " \x1b[0m");
 
                 input.prompt(true);
+            } else if (data.type === "notification" && data.body.isRead === false) {
+                if (data.body.type === "reaction") {
+                    console.log("reaction", data.body.reaction, data.body.note.id.slice(-4), data.body.note.text); //TODO:ぶえ
+                } else if (data.body.type === "renote" || data.body.type === "quote") {
+                    console.log("renote", data.body.renote.id.slice(-4), data.body.note.id.slice(-4), data.body.renote.text, data.body.note.text);
+                } else if (data.body.type === "reply") {
+                    console.log(JSON.stringify(data));
+                } else {
+                    console.log(JSON.stringify(data));
+                }
+            } else if (data.type === "readAllNotifications" || data.type === "unreadNotification" || data.type === "renote") {
+                // do nothing
+            } else {
+                console.log(JSON.stringify(data));
             }
         }));
 
