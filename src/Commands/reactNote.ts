@@ -1,6 +1,6 @@
 import command from "./command";
 import API from "../Connection/API";
-import connectStream from "./connectStream";
+import Streaming from "../Connection/Streaming";
 
 export default class reactNote extends command {
     regex = /^(fav)$/
@@ -11,7 +11,7 @@ export default class reactNote extends command {
             return (new reactNote).help;
         }
         const text = t[2] ? t[2] : "🍮";
-        const noteId = connectStream.notes.get(t[1]);
+        const noteId = Streaming.notes.get(t[1]);
         if (!noteId) {
             return (new reactNote).help;
         }

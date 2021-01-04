@@ -1,6 +1,6 @@
 import command from "./command";
 import API from "../Connection/API";
-import connectStream from "./connectStream";
+import Streaming from "../Connection/Streaming";
 
 export default class replyNote extends command {
     regex = /^(reply|re)$/
@@ -11,7 +11,7 @@ export default class replyNote extends command {
             return (new replyNote).help;
         }
         const text = t[2];
-        const replyId = connectStream.notes.get(t[1]);
+        const replyId = Streaming.notes.get(t[1]);
         if (replyId == undefined || text == undefined || /^[ ]*$/.test(text)) {
             return (new replyNote).help;
         }

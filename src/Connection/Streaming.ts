@@ -56,16 +56,73 @@ export default class Streaming {
         }
     }
 
-    public connectChannel(body: StreamingBody, callback: (param: string) => void): string {
+    static Id: Map<string, string> = new Map<string, string>();
+    static notes: Map<string, string> = new Map<string, string>();
+
+    public connectChannel(arg: string): string {
         if (!Streaming.isReady) { return "not_connected"; }
+
+        const body = new StreamingBody(arg);
         Streaming.ws.send(JSON.stringify({ "type": "connect", "body": body }));
-        Streaming.hook.set(body.id, callback);
+        Streaming.hook.set(body.id, (data: any) => {
+            // console.log(data);
+            if (data.type === "note") {
+                // input.prompt(false);
+                process.stdout.write("\x1b[1A" + "\x1b[2K");
+
+                if (data.body.renote) {
+                    console.log("\x1b[G" + "\x1b[46m " + data.body.user.name + " \x1b[43m Re "
+                        + "\x1b[42m " + data.body.renote.user.name + " \x1b[0m");
+                } else {
+                    console.log("\x1b[G" + "\x1b[46m " + data.body.user.name + " \x1b[0m");
+                }
+
+                console.log(data.body.text ? data.body.text : '\x1b[2m (本文なし) \x1b[0m');
+
+                if (data.body.renote) {
+                    process.stdout.write('-'.repeat(process.stdout.columns) + " \x1b[0m");
+
+                    console.log("\x1b[G" + data.body.renote.text + " \x1b[0m");
+                }
+
+                let id = data.body.user.username + (data.body.user.host ? ('@' + data.body.user.host) : '');
+                if (data.body.renote) {
+                    id += ' Re ' + data.body.renote.user.username + '@' + data.body.renote.user.host;
+                }
+                Streaming.notes.set(data.body.id.slice(-4), data.body.id);
+                console.log("\x1b[G\x1b[47m\x1b[30m " + data.body.id.slice(-4) + ' ' + id + ' '.repeat(process.stdout.columns - data.body.createdAt.length - id.toString().length - 2 - 5) + data.body.createdAt + " \x1b[0m");
+
+                input.prompt(true);
+            } else if (data.type === "notification" && data.body.isRead === false) {
+                if (data.body.type === "reaction") {
+                    console.log("reaction", data.body.reaction, data.body.note.id.slice(-4), data.body.note.text);
+                } else if (data.body.type === "renote" || data.body.type === "quote") {
+                    console.log("renote", data.body.note.renote.id.slice(-4), data.body.note.id.slice(-4), data.body.note.renote.text, data.body.note.text);
+                } else if (data.body.type === "reply") {
+                    console.log(JSON.stringify(data));
+                } else {
+                    console.log(JSON.stringify(data));
+                }
+            } else if (data.type === "readAllNotifications" || data.type === "unreadNotification" || data.type === "renote" || data.type === "driveFileCreated") {
+                // do nothing
+            } else {
+                console.log(JSON.stringify(data));
+            }
+        });
+        Streaming.Id.set(arg, body.id);
         return body.id;
     }
 
-    public disconnectChannel(id: string): void {
-        const body = new StreamingBody("connect", id);
-        Streaming.ws.send(JSON.stringify({ "type": "disconnect", "body": body }));
-        Streaming.hook.delete(id);
+    public disconnectChannel(arg: string): boolean {
+        const id = Streaming.Id.get(arg);
+        if (id) {
+            const body = new StreamingBody("connect", id);
+            Streaming.ws.send(JSON.stringify({ "type": "disconnect", "body": body }));
+            Streaming.hook.delete(id);
+        } else {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -1,6 +1,6 @@
 import command from "./command";
 import API from "../Connection/API";
-import connectStream from "./connectStream";
+import Streaming from "../Connection/Streaming";
 
 export default class repostNote extends command {
     regex = /^(renote|rp)$/
@@ -11,7 +11,7 @@ export default class repostNote extends command {
             return (new repostNote).help;
         }
         const text = t[2];
-        const renoteId = connectStream.notes.get(t[1]);
+        const renoteId = Streaming.notes.get(t[1]);
         if (!renoteId) {
             return (new repostNote).help;
         }
