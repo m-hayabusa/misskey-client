@@ -96,10 +96,18 @@ export default class Streaming {
                 input.prompt(true);
             } else if (data.type === "notification" && data.body.isRead === false) {
                 if (data.body.type === "reaction") {
+                    Streaming.notes.set(data.body.note.id.slice(-4), data.body.note.id);
+
                     console.log("reaction", data.body.reaction, data.body.note.id.slice(-4), data.body.note.text);
                 } else if (data.body.type === "renote" || data.body.type === "quote") {
+                    Streaming.notes.set(data.body.note.id.slice(-4), data.body.note.id);
+                    Streaming.notes.set(data.body.note.renote.id.slice(-4), data.body.note.renote.id);
+
                     console.log("renote", data.body.note.renote.id.slice(-4), data.body.note.id.slice(-4), data.body.note.renote.text, data.body.note.text);
                 } else if (data.body.type === "reply" || data.body.type === "mention") {
+                    Streaming.notes.set(data.body.note.id.slice(-4), data.body.note.id);
+                    Streaming.notes.set(data.body.note.reply.id.slice(-4), data.body.note.reply.id);
+
                     console.log("reply", data.body.note.reply.id.slice(-4), data.body.note.id.slice(-4), data.body.note.reply.text, data.body.note.text);
                 } else {
                     console.log(JSON.stringify(data));
