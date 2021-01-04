@@ -32,6 +32,7 @@ export default class Streaming {
                 Streaming.isReady = true;
                 process.stdout.write("\x1b[1A" + "\x1b[2K");
                 console.log("connected");
+                this.connectChannel("main");
                 input.prompt(true);
             });
             Streaming.ws.on("message", (str: any) => {
