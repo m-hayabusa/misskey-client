@@ -99,16 +99,17 @@ export default class Streaming {
                     console.log("reaction", data.body.reaction, data.body.note.id.slice(-4), data.body.note.text);
                 } else if (data.body.type === "renote" || data.body.type === "quote") {
                     console.log("renote", data.body.note.renote.id.slice(-4), data.body.note.id.slice(-4), data.body.note.renote.text, data.body.note.text);
-                } else if (data.body.type === "reply") {
-                    console.log(JSON.stringify(data));
+                } else if (data.body.type === "reply" || data.body.type === "mention") {
+                    console.log("reply", data.body.note.reply.id.slice(-4), data.body.note.id.slice(-4), data.body.note.reply.text, data.body.note.text);
                 } else {
                     console.log(JSON.stringify(data));
                 }
-            } else if (data.type === "readAllNotifications" || data.type === "unreadNotification" || data.type === "renote" || data.type === "driveFileCreated") {
+            } else if (data.type === "readAllNotifications" || data.type === "readAllNotificreadAllUnreadMentionsations" || data.type === "unreadNotification" || data.type === "renote" || data.type === "reply" || data.type === "mention" || data.type === "driveFileCreated") {
                 // do nothing
             } else {
                 console.log(JSON.stringify(data));
             }
+            input.prompt(true);
         });
         Streaming.Id.set(arg, body.id);
         return body.id;
