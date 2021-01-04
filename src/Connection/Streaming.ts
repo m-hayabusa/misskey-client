@@ -109,10 +109,14 @@ export default class Streaming {
                     Streaming.notes.set(data.body.note.reply.id.slice(-4), data.body.note.reply.id);
 
                     console.log("reply", data.body.note.reply.id.slice(-4), data.body.note.id.slice(-4), data.body.note.reply.text, data.body.note.text);
+                } else if (data.body.type === "receiveFollowRequest") {
+                    console.log("receiveFollowRequest", data.body.user.username);
+                } else if (data.body.type === "follow") {
+                    console.log("follow", data.body.user.username);
                 } else {
                     console.log(JSON.stringify(data));
                 }
-            } else if (data.type === "readAllNotifications" || data.type === "readAllNotificreadAllUnreadMentionsations" || data.type === "unreadNotification" || data.type === "renote" || data.type === "reply" || data.type === "mention" || data.type === "driveFileCreated") {
+            } else if (data.type === "readAllNotifications" || data.type === "readAllNotificreadAllUnreadMentionsations" || data.type === "unreadNotification" || data.type === "renote" || data.type === "reply" || data.type === "mention" || data.type === "driveFileCreated" || data.type === "meUpdated") {
                 // do nothing
             } else {
                 console.log(JSON.stringify(data));
