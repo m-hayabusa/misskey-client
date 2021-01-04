@@ -40,9 +40,9 @@ export default class connectStream extends command {
                 input.prompt(true);
             } else if (data.type === "notification" && data.body.isRead === false) {
                 if (data.body.type === "reaction") {
-                    console.log("reaction", data.body.reaction, data.body.note.id.slice(-4), data.body.note.text); //TODO:ぶえ
+                    console.log("reaction", data.body.reaction, data.body.note.id.slice(-4), data.body.note.text);
                 } else if (data.body.type === "renote" || data.body.type === "quote") {
-                    console.log("renote", data.body.renote.id.slice(-4), data.body.note.id.slice(-4), data.body.renote.text, data.body.note.text);
+                    console.log("renote", data.body.note.renote.id.slice(-4), data.body.note.id.slice(-4), data.body.note.renote.text, data.body.note.text);
                 } else if (data.body.type === "reply") {
                     console.log(JSON.stringify(data));
                 } else {
