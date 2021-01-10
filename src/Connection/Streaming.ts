@@ -1,7 +1,7 @@
-import API from "./API";
+import { Api } from "./API";
 import websocket from 'ws';
 import { v4 as uuidv4 } from 'uuid';
-import { input } from '../main';
+import { Input } from '../Interfaces/input';
 
 export class StreamingBody {
     public channel: string
@@ -27,13 +27,13 @@ export default class Streaming {
             Streaming.hook.clear();
         }
         if (!Streaming.isReady) {
-            Streaming.ws = new websocket("wss://" + API.accounts.get(API.account)?.getUri() + "/streaming?i=" + API.accounts.get(API.account)?.getKey());
+            Streaming.ws = new websocket("wss://" + Api.accounts.get(Api.account)?.getUri() + "/streaming?i=" + Api.accounts.get(Api.account)?.getKey());
             Streaming.ws.on('open', () => {
                 Streaming.isReady = true;
                 process.stdout.write("\x1b[1A" + "\x1b[2K");
                 console.log("connected");
                 this.connectChannel("main");
-                input.prompt(true);
+                Input.prompt(true);
             });
             Streaming.ws.on("message", (str: any) => {
                 try {
@@ -44,7 +44,7 @@ export default class Streaming {
                         hook(data.body);
                     } else {
                         console.log(data.body);
-                        input.prompt(true);
+                        Input.prompt(true);
                     }
                 } catch (e) {
                     console.warn("ぶええええ\n", e, "\n\n");
@@ -68,7 +68,7 @@ export default class Streaming {
         Streaming.hook.set(body.id, (data: any) => {
             // console.log(data);
             if (data.type === "note") {
-                // input.prompt(false);
+                // Input.prompt(false);
                 process.stdout.write("\x1b[1A" + "\x1b[2K");
 
                 if (data.body.renote) {
@@ -93,7 +93,7 @@ export default class Streaming {
                 Streaming.notes.set(data.body.id.slice(-4), data.body.id);
                 console.log("\x1b[G\x1b[47m\x1b[30m " + data.body.id.slice(-4) + ' ' + id + ' '.repeat(process.stdout.columns - data.body.createdAt.length - id.toString().length - 2 - 5) + data.body.createdAt + " \x1b[0m");
 
-                input.prompt(true);
+                Input.prompt(true);
             } else if (data.type === "notification" && data.body.isRead === false) {
                 if (data.body.type === "reaction") {
                     Streaming.notes.set(data.body.note.id.slice(-4), data.body.note.id);
@@ -121,7 +121,7 @@ export default class Streaming {
             } else {
                 console.log(JSON.stringify(data));
             }
-            input.prompt(true);
+            Input.prompt(true);
         });
         Streaming.Id.set(arg, body.id);
         return body.id;

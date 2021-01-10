@@ -1,5 +1,5 @@
 import command from "./command";
-import { input } from '../main';
+import { Input } from '../Interfaces/input';
 
 import help from "./help";
 import createNote from "./createNote";
@@ -20,7 +20,7 @@ export default class Commands {
         this.commands.forEach(e => {
             if (e.regex.test(arg.replace(regex, '$1'))) {
                 console.log(e.function(arg.replace(regex, '$2')));
-                input.prompt(true);
+                Input.prompt(true);
             }
         });
     }

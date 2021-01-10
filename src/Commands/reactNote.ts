@@ -1,5 +1,5 @@
 import command from "./command";
-import API from "../Connection/API";
+import { Api } from "../Connection/API";
 import Streaming from "../Connection/Streaming";
 
 export default class reactNote extends command {
@@ -15,8 +15,7 @@ export default class reactNote extends command {
         if (!noteId) {
             return (new reactNote).help;
         }
-        const api = new API();
-        api.request("notes/reactions/create", { 'noteId': noteId, 'reaction': text });
+        Api.request("notes/reactions/create", { 'noteId': noteId, 'reaction': text });
         return "reactNote: " + arg;
     };
 }

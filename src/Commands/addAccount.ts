@@ -1,6 +1,6 @@
 import command from "./command";
-import API from "../Connection/API";
-import { input } from '../main';
+import { Api } from "../Connection/API";
+import { Input } from '../Interfaces/input';
 import { v4 as uuidv4 } from 'uuid';
 import { misskeyCredential } from "../Connection/API";
 import Config from '../Interfaces/config';
@@ -9,9 +9,7 @@ export default class addAccount extends command {
     regex = /^(addAccount)$/;
     help = "addAccount:\t> addAccount <ドメイン>\t-> そのインスタンスのアカウントでログインします";
     function = function (arg: string): string {
-        const api = new API;
-
-        if (!arg || API.accounts.has(arg)) {
+        if (!arg || Api.accounts.has(arg)) {
             return (new addAccount).help;
         }
 
@@ -20,12 +18,12 @@ export default class addAccount extends command {
         const name = "MisskeyTerm";
 
         console.log("https://" + arg + "/miauth/" + sessionID + "?name=" + name + "&permission=" + perms);
-        input.question("Webブラウザに移動して、やっていったらEnter", () => {
-            api.request("miauth/" + sessionID + "/check", {}, (ret: any) => {
+        Input.question("Webブラウザに移動して、やっていったらEnter", () => {
+            Api.request("miauth/" + sessionID + "/check", {}, (ret: any) => {
                 if (ret.ok) {
                     console.log("取得しました");
-                    API.accounts.set(ret.user.username + '@' + arg, new misskeyCredential(arg, ret.token));
-                    API.account = ret.user.username + '@' + arg;
+                    Api.accounts.set(ret.user.username + '@' + arg, new misskeyCredential(arg, ret.token));
+                    Api.account = ret.user.username + '@' + arg;
                     const config = new Config;
                     config.saveCredentials();
                 } else {

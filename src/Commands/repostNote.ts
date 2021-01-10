@@ -1,5 +1,5 @@
 import command from "./command";
-import API from "../Connection/API";
+import { Api } from "../Connection/API";
 import Streaming from "../Connection/Streaming";
 
 export default class repostNote extends command {
@@ -15,8 +15,7 @@ export default class repostNote extends command {
         if (!renoteId) {
             return (new repostNote).help;
         }
-        const api = new API();
-        api.request("notes/create", { "text": text, 'visibility': 'public', 'renoteId': renoteId });
+        Api.request("notes/create", { "text": text, 'visibility': 'public', 'renoteId': renoteId });
         return "repostNote: " + arg;
     };
 }

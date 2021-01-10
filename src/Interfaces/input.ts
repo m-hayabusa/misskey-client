@@ -1,5 +1,5 @@
 import Commands from "../Commands/commands";
-import API from "../Connection/API";
+import { Api } from "../Connection/API";
 import readline from "readline";
 
 export default class input {
@@ -18,7 +18,7 @@ export default class input {
     }
 
     public prompt(flag: boolean): string {
-        this.reader.setPrompt(API.account + " > ");
+        this.reader.setPrompt(Api.account + " > ");
         return this.reader.prompt(flag);
     }
 
@@ -76,3 +76,5 @@ export default class input {
         this.prompt(true);
     }
 }
+
+export const Input = new input();

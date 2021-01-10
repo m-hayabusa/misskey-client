@@ -1,5 +1,5 @@
 import command from "./command";
-import API from "../Connection/API";
+import { Api } from "../Connection/API";
 
 export default class execute extends command {
     regex = /^(f)$/;
@@ -10,7 +10,6 @@ export default class execute extends command {
         }
         try {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const api = new API(); //eval内からapiにアクセスできるようにするため
             return "execute: " + eval(arg);
         } catch (e) {
             return "execute: " + e;

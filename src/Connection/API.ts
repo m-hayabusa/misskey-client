@@ -1,6 +1,7 @@
 import https from 'https';
-import { config, input } from '../main';
+import { Input } from '../Interfaces/input';
 import Streaming from "../Connection/Streaming";
+import { Config } from "../Interfaces/config";
 
 
 export class misskeyCredential {
@@ -22,28 +23,25 @@ export class misskeyCredential {
 }
 
 
-export default class API {
-    static accounts: Map<string, misskeyCredential>;
-    static _account: string;
-    static get account(): string {
-        return API._account;
+class API {
+    public accounts = new Map<string, misskeyCredential>();
+    private _account = "";
+    public get account(): string {
+        Config.loadCredentials();
+        if (this._account === "" && this.accounts.size > 0) {
+            this._account = this.accounts.keys().next().value;
+        }
+        return this._account;
     }
-    static set account(arg: string) {
-        API._account = arg;
+    public set account(arg: string) {
+        this._account = arg;
 
         new Streaming(true);
     }
 
-    constructor() {
-        config.loadCredentials();
-        if (API.account === undefined && API.accounts.size > 0) {
-            API.account = API.accounts.keys().next().value;
-        }
-    }
-
     public request(endpoint: string, reqbody: any, callback?: (param: string) => void, auth = true, host?: string): void {
-        if (API.accounts.has(API.account)) {
-            const credential = API.accounts.get(API.account);
+        if (this.accounts.has(this.account)) {
+            const credential = this.accounts.get(this.account);
             if (credential === undefined) return;
             reqbody.i = credential.getKey();
             if (host === undefined) host = credential.getUri();
@@ -82,7 +80,7 @@ export default class API {
                 if (callback) {
                     callback(JSON.parse(ret));
                 } else {
-                    input.prompt(true);
+                    Input.prompt(true);
                 }
             });
         });
@@ -93,3 +91,5 @@ export default class API {
         req.end();
     }
 }
+
+export const Api = new API();
