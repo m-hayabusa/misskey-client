@@ -3,7 +3,7 @@ import { Api } from "../Connection/API";
 import { Input } from '../Interfaces/input';
 import { v4 as uuidv4 } from 'uuid';
 import { misskeyCredential } from "../Connection/API";
-import Config from '../Interfaces/config';
+import { Config } from '../Interfaces/config';
 
 export default class addAccount extends command {
     regex = /^(addAccount)$/;
@@ -23,9 +23,8 @@ export default class addAccount extends command {
                 if (ret.ok) {
                     console.log("取得しました");
                     Api.accounts.set(ret.user.username + '@' + arg, new misskeyCredential(arg, ret.token));
+                    Config.saveCredentials();
                     Api.account = ret.user.username + '@' + arg;
-                    const config = new Config;
-                    config.saveCredentials();
                 } else {
                     console.log("取得できませんでした");
                 }

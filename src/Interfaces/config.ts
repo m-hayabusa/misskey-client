@@ -2,7 +2,7 @@ import { Api } from "../Connection/API";
 import { misskeyCredential } from "../Connection/API";
 import fs from 'fs';
 
-export default class config {
+class config {
     public saveCredentials(): boolean {
         try {
             if (!fs.existsSync("./.config")) { fs.mkdirSync("./.config"); }
