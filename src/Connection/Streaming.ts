@@ -40,11 +40,7 @@ export default class Streaming {
                     const data = JSON.parse(str);
                     const hook = Streaming.hook.get(data.body.id);
                     if (hook != null) {
-                        console.log();
                         hook(data.body);
-                    } else {
-                        console.log(data.body);
-                        Input.prompt(true);
                     }
                 } catch (e) {
                     console.warn("ぶええええ\n", e, "\n\n");
@@ -66,10 +62,8 @@ export default class Streaming {
         const body = new StreamingBody(arg);
         Streaming.ws.send(JSON.stringify({ "type": "connect", "body": body }));
         Streaming.hook.set(body.id, (data: any) => {
-            // console.log(data);
             if (data.type === "note") {
-                // Input.prompt(false);
-                process.stdout.write("\x1b[1A" + "\x1b[2K");
+                process.stdout.write("\x1b[2K");
 
                 if (data.body.renote) {
                     console.log("\x1b[G" + "\x1b[46m " + data.body.user.name + " \x1b[43m Re "
@@ -98,30 +92,26 @@ export default class Streaming {
                 if (data.body.type === "reaction") {
                     Streaming.notes.set(data.body.note.id.slice(-4), data.body.note.id);
 
-                    console.log("reaction", data.body.reaction, data.body.note.id.slice(-4), data.body.note.text);
+                    console.log("\x1b[G\x1b[2Kreaction", `${data.body.user.name} ${data.body.user.username}${data.body.user.host ? '@' + data.body.user.host : ''}` ,data.body.reaction, data.body.note.id.slice(-4), data.body.note.text);
                 } else if (data.body.type === "renote" || data.body.type === "quote") {
                     Streaming.notes.set(data.body.note.id.slice(-4), data.body.note.id);
                     Streaming.notes.set(data.body.note.renote.id.slice(-4), data.body.note.renote.id);
 
-                    console.log("renote", data.body.note.renote.id.slice(-4), data.body.note.id.slice(-4), data.body.note.renote.text, data.body.note.text);
+                    console.log("\x1b[G\x1b[2Krenote", data.body.note.renote.id.slice(-4), data.body.note.id.slice(-4), data.body.note.renote.text, data.body.note.text);
                 } else if (data.body.type === "reply" || data.body.type === "mention") {
                     Streaming.notes.set(data.body.note.id.slice(-4), data.body.note.id);
                     Streaming.notes.set(data.body.note.reply.id.slice(-4), data.body.note.reply.id);
 
-                    console.log("reply", data.body.note.reply.id.slice(-4), data.body.note.id.slice(-4), data.body.note.reply.text, data.body.note.text);
+                    console.log("\x1b[G\x1b[2Kreply", data.body.note.reply.id.slice(-4), data.body.note.id.slice(-4), data.body.note.reply.text, data.body.note.text);
                 } else if (data.body.type === "receiveFollowRequest") {
-                    console.log("receiveFollowRequest", data.body.user.username);
+                    console.log("\x1b[G\x1b[2KreceiveFollowRequest", data.body.user.username);
                 } else if (data.body.type === "follow") {
-                    console.log("follow", data.body.user.username);
+                    console.log("\x1b[G\x1b[2Kfollow", data.body.user.username);
                 } else {
-                    console.log(JSON.stringify(data));
+                    console.log("\x1b[G\x1b[2Knotify", JSON.stringify(data));
                 }
-            } else if (data.type === "readAllNotifications" || data.type === "readAllNotificreadAllUnreadMentionsations" || data.type === "unreadNotification" || data.type === "renote" || data.type === "reply" || data.type === "mention" || data.type === "driveFileCreated" || data.type === "meUpdated") {
-                // do nothing
-            } else {
-                console.log(JSON.stringify(data));
+                Input.prompt(true);
             }
-            Input.prompt(true);
         });
         Streaming.Id.set(arg, body.id);
         return body.id;
