@@ -59,7 +59,7 @@ class API {
             path: '/api/' + endpoint,
             method: 'POST',
             headers: {
-                'Content-Type': 'applications/json',
+                'Content-Type': 'application/json',
                 'Content-Length': Buffer.byteLength(body)
             },
             agent: false
